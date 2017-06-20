@@ -1,4 +1,4 @@
-![alt text](https://github.com/pameliux/starter-kit/blob/master/logo/R-LadiesGlobal_RBG_online_LogoOnly.png?raw=true "RLadies")
+![alt text](https://github.com/pameliux/starter-kit/blob/master/logo/R-LadiesGlobal_RBG_online_LogoWithText_Horizontal.png "RLadies")
 
 # RLadies_MUC
 All RLadies related stuff (before opening official group Git)
