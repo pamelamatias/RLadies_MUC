@@ -5,5 +5,5 @@ Cool that you landed in one of our _temporary_ repos for the RLadies Munich chap
 
 Please navigate to the folder corresponding to today's workshop: 
 
-[I'm an inline-style link] 
+[20170521_2nd_meetup_ggplot2intro] (https://github.com/pameliux/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro)
 
