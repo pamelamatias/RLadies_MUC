@@ -1,5 +1,5 @@
+# Making fRiends with: ggplot2
 
-#Making fRiends with: ggplot2
 Data + code for the [second RLadies Munich Meetup](https://www.meetup.com/rladies-munich/events/240663684/) on Wednesday 21st, 2017.
 
 So excited to have the chance to experiment and play around with a visualization tool as cool and _actually_ not as scary to use as `ggplot2`! 
@@ -22,11 +22,11 @@ Before we start, do check you have R and RStudio in your personal computer. If y
 Please download the files that we'll be using today:
 
 ### Annotated code and step-by step instructions for the workshop #pending
-* (Name)[link] - PDF file (ready to be printed out)
-* (Name)[link] - RMarkdown file (ready to be opened and ran in R)
+* [Name](link) - PDF file (ready to be printed out)
+* [Name](link) - RMarkdown file (ready to be opened and ran in R)
 
 ### R code
-* (Name)[link] - R code #pending
+* [Name](link) - R code #pending
 
 ### Data
 * [life.csv](xxxxx): data on life expectancy for each country from 2000 to 2015, from the [World Health Organization](http://apps.who.int/gho/data/view.main.SDG2016LEXv?lang=en) #pending
@@ -50,7 +50,7 @@ And the [PowerPoint slides](https://github.com/pameliux/RLadies_MUC/blob/master/
 
 ## Comments / Questions / Suggestions / gReetings (_see what I did there_)
 
-Drop us a line in 
+Drop us a line at 
 
 munich at rladies dot com
 
