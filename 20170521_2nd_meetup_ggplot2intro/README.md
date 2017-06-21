@@ -55,7 +55,7 @@ Drop us a line at
 munich at rladies dot com
 
 or in any of our social media
-* (Facebook)[https://www.facebook.com/RLadiesMunich/?ref=aymt_homepage_panel]
-* (Instagram)[https://www.instagram.com/rladiesmunich/]
-* (Meetup)[https://www.meetup.com/rladies-munich/]
+* [Facebook](https://www.facebook.com/RLadiesMunich/?ref=aymt_homepage_panel)
+* [Instagram](https://www.instagram.com/rladiesmunich/)
+* [Meetup](https://www.meetup.com/rladies-munich/)
 * and Slack :sparkles:
