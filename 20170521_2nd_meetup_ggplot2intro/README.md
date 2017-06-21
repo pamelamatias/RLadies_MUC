@@ -6,10 +6,6 @@ So excited to have the chance to experiment and play around with a visualization
 
  [Hadley Wickham](http://hadley.nz/)'s `ggplot2` is a package that gets its name after the **Grammar of Graphics** (concept proposed by [Leland Wilkinson](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448)), and was created as to offer a structured approach to data visualization. 
  
- As he wrote in 2012:
-
-> "The emphasis in ggplot2 is reducing the amount of thinking time by making it easier to go from the plot in your brain to the plot on the page." #pending
-
 Before we start, do check you have R and RStudio in your personal computer. If you don't, just follow the steps suggested in the following links:
 
 ## Links to install R and RStudio
