@@ -217,11 +217,11 @@ ggplot(berlin, aes(x = room_type, y = reviews_per_month)) +
   facet_wrap(~neighbourhood_group, nrow = 4)
 
 ####__Practice 4
-berlin_neighborhood <- subset(berlin,neighbourhood_group=="Mitte"&price<200)
+berlin_neighborhood <- subset(berlin,neighbourhood_group=="Mitte"&minimum_nights>20)
 ggplot(berlin_neighborhood, aes(price, number_of_reviews, color = room_type)) +
-  geom_point() +
-  facet_grid(.~room_type)+                     	#splitted into grid / matrix (x ~ y)
-  theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
-        strip.text = element_text(size = 8)) +
-  scale_color_manual(values = brewer.pal(3, 'Spectral'))+		#changing colors using RColorBrewer
-  ggtitle('A beautiful ggplot2')	#plot title
+    geom_point() +
+    facet_grid(.~room_type)+                        #splitted into grid / matrix (x ~ y)
+    theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
+            strip.text = element_text(size = 8)) +
+    scale_color_manual(values = brewer.pal(3, 'Spectral'))+     #changing colors using RColorBrewer
+    ggtitle('Price and number of reviews from listings in Berlin\'s city center')   #plot title
