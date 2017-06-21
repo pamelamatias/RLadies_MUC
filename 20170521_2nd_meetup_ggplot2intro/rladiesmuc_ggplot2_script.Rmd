@@ -2,7 +2,11 @@
 title: "Making fRiends with: ggplot2"
 author: "Pamela Matias"
 date: "June 21st 2017"
-output: html_document
+output:
+  html_document: default
+  html_notebook: default
+  pdf_document: default
+
 ---
 
 ***
@@ -92,6 +96,7 @@ Now, let's get to work. We need to download the data and read it in R; this firs
 ```{r}
 #install.packages("RCurl")
 library(RCurl)
+library(RColorBrewer)
 ```
 
 Note: There are two datasets online:
@@ -100,7 +105,7 @@ Note: There are two datasets online:
 
 * Our [workshop data](https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv), which has some minor corrections for funny characters appearing in German names (such as the emoji looking o's and u's _mit umlaut_)
 
-```{r}
+```{r, eval=F, echo=F}
 # A bit of preprocessing
 
 berlin_raw<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_raw.csv")
@@ -145,23 +150,49 @@ berlin<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup
 
 ```
 
-```{r}
+```{r, eval=F}
 # Option 1: Importing directly from GitHub using RCurl
 x <- getURL("https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
-berlin <- read.csv(text = x, sep=";")
+berlin <- read.csv(text = x)
 
 #Option 2: Download and save (or clone) data, then just type in the corresponding directory and off we go!
-berlin<-read.table("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv", sep=";")
+berlin<-read.table("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
 
 # Check nothing funny happened while we were importing it
 head(berlin)
 ```
 
+```{r}
+# Option 1: Importing directly from GitHub using RCurl
+x <- getURL("https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
+berlin <- read.csv(text = x)
+
+# Check nothing funny happened while we were importing it
+head(berlin)
+```
 As you can see, `berlin` has >20k listings for AirBnB places in Berlin, and 15 observations per listing. This dataset is actually a snapshot of the listings available at a particular time (in this case, up to last month). Let's take a quick look at the variables:
 ```{r exploring_berlin_01}
-#summary() of each variable: five-point statistics for numeric variables, while number of entries per levels in factors
+#Define type of variable
+berlin$id <- as.integer(berlin$id)
+berlin$host_id <- as.integer(berlin$host_id)
+berlin$host_name <- as.factor(berlin$host_name)
+berlin$neighbourhood_group <- as.factor(berlin$neighbourhood_group)
+berlin$neighbourhood <- as.factor(berlin$neighbourhood)
+berlin$room_type <- as.factor(berlin$room_type)
+berlin$number_of_reviews <- as.numeric(berlin$number_of_reviews)
+berlin$last_review <- as.Date(berlin$last_review)
+berlin$calculated_host_listings_count <- as.numeric(berlin$calculated_host_listings_count)
+berlin$availability_365 <- as.numeric(berlin$availability_365)
+berlin$minimum_nights <- as.numeric(berlin$minimum_nights)
+berlin$reviews_per_month <- as.numeric(berlin$reviews_per_month)
+berlin$price <- as.numeric(berlin$price)
+berlin <- berlin[,-1]
+#And check out its structure
+dim(berlin) #20576 x 16
 str(berlin)
-dim(berlin) #20584 x 15
+
+#summary() of each variable: five-point statistics for numeric variables, while number of entries per levels in factors
+
 summary(berlin)
 
 ```
@@ -175,187 +206,190 @@ Compared to base graphics, ggplot2:
 * requires data to be in a data.frame
 * uses a different system for adding plot elements as layers
 
-Let's take another look at the example we had before
-
+Let's take another look at the example we had before for the BaseGraphics:
 ```{r}
 hist(berlin$availability_365)
-hist(berlin$number_of_reviews)
 ```
+
+and same example with ggplot2:
+```{r}
+library(ggplot2)
+ggplot(berlin, aes(x = availability_365)) +
+  geom_histogram()
+```
+
+
+But what if we want to do something slightly more complex? 
+
+That's where the magic of __ggplot2__ comes in handy ;)
 
 
 ***  
-## Basic types of plots
+## Aesthetic mapping and geometric objects
 
-All we need to get started is defining our dataset (data =) and the variables we wish to see plotted on the x- and y-axis. 
+Aesthetics mapping stands for the parameters that we can actually see in our plots.
+* position (i.e., on the x and y axes)
+* color ("outside" color)
+* fill ("inside" color)
+* shape (of points)
+* linetype
+* size
+These parameters are set with the `aes()` function. Of note, each type of geom accepts only a specific subset of all aesthetics. Check out the the geom help pages to see what mappings each geom accepts. 
 
-Geometric objects, shortly geom_xy(), and is added in second step to the definition of our data space.
+Geometric objects are the actual marks that we put on a plot, such as points, lines or boxplots. They are encoded in this package as:
+* points: `geom_point()`, useful for scatter plots and dot plots.
+* lines: `geom_line()`, for line plots as time series and trend lines.
+* bar charts and histograms: `geom_bar()`, `geom_histogram()`
+* boxplots: `geom_boxplot()` or `stat_boxplot()`
+* multiple facets of variables: using `facet_grid()` or `facet_wrap()`
 
-The package ggplot2 contains a number of geoms - here we get started with:
-  *Scatter plots: geom_point()
-*Line plots: geom_line()
-*Bar charts and histograms: geom_bar(), geom_histogram()
-*Box-plots: geom_boxplot(), stat_boxplot()
-*Multiple facets of variables: facet_grid(), facet_wrap()
+And these geom_xy() are usually added as a second step to the definition of our data space.
 
 
+From here, all we need to get started is defining our dataset and the variables we wish to see plotted on the x- and y-axis, and gradually build on this. 
 
+
+## Basic plots
 
 ### 1 - Scatter plot
+_Scatter plots are useful when comparing two continous variables_
 
-_Scatter plots are used to compare two continous variables_
-
-####  2 continuous variables
-
-Plot the relation of **
-  
-  [_words_](link)  
+#### Minimum length of stay vs price
+Let's explore the relationship between the minimum stay nights and the price per night.
 
 ```{r scatter_01}
 #definition of the data set and variables for each axis.
-ggplot(berlin, aes(x = carat, y = price))
-
+ggplot(berlin, aes(x = minimum_nights, y = price))
 ```
 
-But? No graphic! What's wrong? We have to define how ggplot2 should illustrate our plot by adding a __geom_xy()__ (geometric object) of choice.
+Wait a second, no plot was created. Why?
+
+Remember, we need to define how will ggplot2 actually plot our information and with which type of geometric object __geom_xy()__.
 
 The __geom_point()__ creates a dot for each data point corresponding to the data.
 
 ```{r scatter_02}
 #adding geom_point()
-ggplot(berlin, aes(x = carat, y = price)) +
-geom_point()
-
+ggplot(berlin, aes(x = minimum_nights, y = price)) +
+  geom_point()
 ```
 
-Here we go! Great, your first scatter plot.
+#### Minimum length of stay vs price
+What if we add another variable that could be potentially related to the price? The physical location of a BnB home could affect the pricing, but how could our plot look if we actually identified _neighbourhood_ group? 
 
-#### Carat vs. Price and colored Cut
-
-Let's add a third variable to make it more interesting. The _cut_ of a diamond affects the quality of a gemstone. How does it look like when we color the dots corresponding to the variable _cut_?
-
-We are modifying the color of each dot. Therefore we have to define an aesthetics for each data point in the __geom_point()__ as shown below in the code.
-
+In order to color code for each dot in our plot according to the neighbourhood it corresponds to, we have to define an aesthetics for each data point in the __geom_point()__ as shown below in the code.
 
 ```{r scatter_03}
-#Color each dot regarding berlin cut
-ggplot(berlin, aes(x = carat, y = price)) +
-  geom_point(aes(color = cut))
-
+#Identify the neighbourhood group to which each dot belongs by color coding for it
+ggplot(berlin, aes(x = minimum_nights, y = price)) +
+  geom_point(aes(color = neighbourhood_group))
 ```
+
+Unless it's a typo in our data, I think I _don't really_ want to stay in that home in Charlottenburg-Wilm: for more than 7500EUR a night, with a minimum stay of around 100 days? No thanks. 
+
+***
 
 
 ### 2 - Line plot
+_Line plots_ are useful for the visualizing a discrete (x-axis) and a continous (y-axis) variable.
 
-_Line plots_ are useful for the visulaization of a discrete (x-axis) and a continous (y-axis) variable.
-
-#### Cut vs. Price
-
+#### Minimum stay vs price
+With this chunk we're doing a similar plot to the one we had before, but this time as a line plot, and playing with the transparency within the __geom_line()__ parameter.
 ```{r line_01}
 #line plots and alpha (transparency)
-ggplot(berlin, aes(x=carat, y=price, color=cut)) +
-  geom_line(alpha=0.6)
-
+ggplot(berlin, aes(x=minimum_nights, y=price, color=neighbourhood_group)) +
+    geom_line(alpha=0.6)
 ```
 
 
 ### 3 - Histograms and bar charts
+What about 1D visualization of either categorical or continuous data? 
 
-__geom_bar()__ and __geom_histogram()__ are geoms visualizing 1D area plots: bar charts are used for categorical x and
-histograms for continous y-values.
+__geom_bar()__ and __geom_histogram()__ do the job for cases in which a categorical variable is defined for the x axis, while a continuous one is done so for the y axis.
 
-The bar height reflects either a count of events in each group, or the exact values in a column of the data frame that is plotted. Therefore we only have to specify the variable x in the plot definition.
-
+Is is only necessary to specify the variable x when coding for our plot, since this is a simple  visualization of a single variable.
 
 #### Bar chart
 
-Visualization of counts per catogery. Here an example of the distribution of the number of berlin per clarity level.
+Here a nice example for the number of listings (or homes) per type of room offered.
 
-Hint: For the illustration of exact values in a bar plot use _stat = 'identity'_ and add a definition of the y-value in the aesthetics _aes()_.
+RLadies Berlin Hint: For the illustration of exact values in a bar plot use _stat = 'identity'_ and add a definition of the y-value in the aesthetics _aes()_.
 
 ```{r bar_01}
-#a simple bar chart
-ggplot(berlin, aes(clarity)) + 
-  geom_bar()
-
+#a simple bar chart showing the distribution of the variable room type
+ggplot(berlin, aes(room_type)) + 
+	geom_bar()
 ```
 
-A stacked bar chart showing the distribution of counts in diamond clarity splitted by cut levels. The parameter _fill_ can be added either in the plot description or as aesthetics in the geom.
+This is a bar chart showing the distribution of type of room splitted by neighbourhood. The parameter _fill_ can be added either in the plot description or as aesthetics in the geom.
 
 ```{r bar_02}
 #distinguishing categories in bar charts
-ggplot(berlin, aes(clarity, fill=cut)) + 
-  geom_bar()
-
-#ggplot(berlin, aes(clarity) + 
-#	geom_bar(aes(fill = cut))
-
+ggplot(berlin, aes(room_type, fill=neighbourhood_group)) + 
+	geom_bar()
 ```
 
 Moving bars of one catogery next to each other by adding _position_ parameter. Dodge means: Adjust position by dodging / moving overlaps to the side.
 
 ```{r bar_03}
 #dodging bar charts next to each other
-ggplot(berlin, aes(clarity, fill=cut)) + 
-  geom_bar(position="dodge")
-
-#creates the same plot
-#ggplot(berlin, aes(clarity, fill=cut)) + 
-#	geom_bar(position=position_dodge())
-
+ggplot(berlin, aes(room_type, fill=neighbourhood_group)) + 
+	geom_bar(position="dodge")
 ```
 
 #### Histogram
 
-important parameter: binwidth, bin
+Another good tip from RLadies Berlin: 
+Even though the default is to use bins that cover the range of the data, it is better to explore multiple widths to find the one that best suits your data.
 
-The default is to use bins bins that cover the range of the data. You should always override this value, exploring multiple widths to find the best to illustrate the stories in your data.
-
+Important parameters to keep in mind: binwidth, bin
 
 ```{r histogram_01}
-#simple histogram showing the distribution of diamond prices
+#simple histogram showing the distribution of pricings for overnight stays in Berlin
 ggplot(berlin, aes(price)) +
   geom_histogram()
+```
 
+Even ggplot2 is suggesting us to change this parameter, as to better display the data. 
+
+Let's do so, but let's focus on those homes whose price per night is < 100 EUR (just so the distribution looks nicer for visualization purposes).
+```{r histogram_01b}
+berlin_price <- subset(berlin,price<100)
+ggplot(berlin_price, aes(price)) +
+  geom_histogram()
 ```
 
 ```{r hisogram_02}
 #definition of number of bins
-ggplot(berlin, aes(price)) +
-  geom_histogram(bins = 200)
+ggplot(berlin_price, aes(price)) +
+  geom_histogram(bins = 50)
 ```
-
 
 ```{r histogram_03}
 #definition of binwidth
-ggplot(berlin, aes(price, fill = cut)) +
-  geom_histogram(binwidth = 500)
+ggplot(berlin_price, aes(price, fill = room_type)) +
+  geom_histogram(binwidth = 5)
 
 ```
-
 
 
 ### 4 - Boxplot
 
-Boxplots are a helpful tool to compare different statistical parameters at one glance. 
+Boxplots help display the distribution of variables across different groups, for example. The first and third quantiles values correspond to the actual limits of the box, while the median is depicted as the line inside the box.
 
-The upper and lower box ends correspond to the first and third quantiles. The bar inside the box represents the median of the distribution.
-
+This plot shows how many reviews per month each type of room gets. 
 ```{r boxplot_01}
-#a simple boxplot helps to compare distributions and related statistics
-ggplot(berlin, aes(x=cut, y=price)) + 
-  geom_boxplot()
-
-
+ggplot(berlin, aes(x=room_type, y=reviews_per_month)) + 
+	geom_boxplot()
 ```
 
-
-How to add whisker? Use the integrated statistics _stat_xy_ of __ggplot2__. Statistics calculate and return values based on the graph definition and are directly applied.
+In order to add a whisker, we need to use the integrated statistics __stat_xy__ of __ggplot2__. Statistics calculate and return values based on the graph definition and are directly applied.
 
 ```{r boxplot_02}
 #stat_boxplot for defining whisker
-ggplot(berlin, aes(x = cut, y = price))  + 
-  stat_boxplot(geom ='errorbar', width = 0.65) + 
-  geom_boxplot() 				# or: stat_boxplot(geom='boxplot')
+ggplot(berlin, aes(x = room_type, y = reviews_per_month))  + 
+ stat_boxplot(geom ='errorbar', width = 0.65) + 
+ geom_boxplot() 				# or: stat_boxplot(geom='boxplot')
 
 ```
 
@@ -363,105 +397,55 @@ Also boxplots are distinguishable by another catogery using the _fill_ in aesthe
 
 ```{r boxplot_03}
 #boxplot grouping prices per color for each cut level, transformation y-axis into log-scale
-ggplot(berlin, aes(x = cut, y = price, fill = color)) + 
-  geom_boxplot() + 
-  scale_y_log10()
-
+ggplot(berlin, aes(x = room_type, y = reviews_per_month, fill = neighbourhood_group)) + 
+	geom_boxplot() 
 ```
-
-
 
 ### 5 - Multiple facets
 
-The package __ggplot2__ offers two different ways of splitting a complex graph into multiple facets by a single factor or maximum two factors. 
+Finally, there are times when you need to split messy graphs by one or two factors in order to make better sense of them. This can be achieved in two different manners with __ggplot2__ 
 
-_facet_wrap()_ arranges the separate facets subsequently next to each other. The number of rows and columns can be defined as additional parameter.
+The first, __facet_wrap()__, arranges the separate facets subsequently next to each other. The number of rows and columns can be defined as additional parameter.
 
 
 ```{r multiple_01}
 #splitted by color and arranged in the two rows
-ggplot(berlin, aes( x = carat, y = price))+
-  geom_point(aes(color = clarity))+
-  facet_wrap(~color, nrow = 2)
+ggplot(berlin, aes(x = reviews_per_month, y = price)) +
+geom_line(aes(color = neighbourhood_group)) +
+facet_wrap(~neighbourhood_group, nrow = 2)
 
+ggplot(berlin, aes(x = availability_365)) +
+geom_histogram(aes(color = neighbourhood_group),bins=50) +
+facet_wrap(~neighbourhood_group, nrow = 4)
+
+ggplot(berlin, aes(x = availability_365, y = number_of_reviews)) +
+geom_point(aes(color = neighbourhood_group)) +
+facet_wrap(~neighbourhood_group, nrow = 4)
 ```
 
-_facet_grid()_ creates a matrix-based arrangement of our plots. Dataset factors are separated by the symbol "~". If there is only a single paramter applied as x coordinate, the second one has to be coded with a placeholder ".", e.g., + facet_grid(color ~ .).
+__facet_grid()__ creates a matrix-based arrangement of our plots. Dataset factors are separated by the symbol "~". If there is only a single paramter applied as x coordinate, the second one has to be coded with a placeholder ".", e.g., + facet_grid(color ~ .).
 
 ```{r multiple_02}
-#same plot - more beautiful
-ggplot(berlin, aes(carat, price, color = clarity)) +
-  geom_point() +
-  facet_grid(color~clarity)+                     	#splitted into grid / matrix (x ~ y)
-  theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
-        strip.text = element_text(size = 8)) +
-  scale_color_manual(values = brewer.pal(8, 'Spectral'))+		#changing colors using RColorBrewer
-  ggtitle('A beautiful ggplot2')	#plot title
+ggplot(berlin, aes(availability_365, reviews_per_month, color = room_type)) +
+	geom_point() +
+	facet_grid(.~room_type)+                     	#splitted into grid / matrix (x ~ y)
+	theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
+			strip.text = element_text(size = 8)) +
+	scale_color_manual(values = brewer.pal(8, 'Spectral'))+		#changing colors using RColorBrewer
+	ggtitle('A beautiful ggplot2')	#plot title
 
+ggplot(berlin, aes(calculated_host_listings_count, reviews_per_month, color = room_type)) +
+	geom_line() +
+	facet_grid(.~room_type)+                     	#splitted into grid / matrix (x ~ y)
+	theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
+			strip.text = element_text(size = 8)) +
+	scale_color_manual(values = brewer.pal(8, 'Spectral'))+		#changing colors using RColorBrewer
+	ggtitle('A beautiful ggplot2')	#plot title
 ```
-
-
-## It's your turn!
-
-###__Task #1:__
-
-Description of the plot:
-  
-  *x-axis: clarity
-*y-axis: counts
-*grouping: cut (labels right side of graphs)
-*color: cut
-*additional: plots below each other in one column, splitted by cut
-
-
-```{r you_01}
-#start here
-
-
-
-```
-
-
-
-###__Task #2:__
-
-Description of the plot:
-  
-  *x-axis: clarity
-*y-axis: counts
-*grouping: cut (labels right side of graphs)
-*color: cut
-*additional: bars next to each other per condition
-
-```{r you_02}
-#your second trial
-
-```
-
-
-###__Task #3:__
-
-Description of the plot:
-  
-  *x-axis: price
-*y-axis: counts, normalized to 1, stacked
-*grouping: cut
-*binwidth: 500
-
-```{r you_03}
-#the final one
-
-
-```
-
-
-## Further information
 
 ### Useful commands
-Here are summarised the most common commands and parameters of __ggplot2__. Just play with them and see how they are working.
-
-```{r commands_ggplot2, tidy=TRUE}
-
+Here are more common commands and parameters of __ggplot2__. 
+```{r commands_ggplot2}
 # coord_flip()   											- rotates your plot
 # theme_bw()													- a black and white scheme
 # aes(shape = , color = )							- define a variable to this parameter inside aes() and modify the shape of points or the color
@@ -471,15 +455,121 @@ Here are summarised the most common commands and parameters of __ggplot2__. Just
 ```
 
 
-### Examples, help and used resources
+### Practice time
+Now it's time for you to play a little with our dataset and the little we covered today :) 
+
+Here are 4 small tasks for you to complete:
+
+#### Exercise 1
+
+Description of the plot:
+	*data: full dataset
+	*x-axis: room type
+	*y-axis: availability within the next 365 days
+
+```{r you_01}
+#your code would be here :)
+
+```
+
+#### Exercise 2
+
+Description of the plot:
+	*data: only those BnB homes cheaper than 100EUR per night
+	*plot: histogram
+	*x-axis: price
+	*color and facetting by: type of room, 3 rows
+
+```{r you_02}
+#your code would be here :)
+
+
+
+```
+
+#### Exercise 3
+
+Description of the plot:
+	*data: full dataset
+	*plot: boxplot
+	*x-axis: type of room
+	*y-axis: reviews per month
+	*color and grouping by: type of room
+	*facetting by: neighbourhood group, 4 rows
+
+```{r you_03}
+#your code would be here :)
+
+
+```
+
+#### Exercise 4
+
+Description of the plot:
+	*data: only those BnB homes located in the city center that might only be rented for longer than 20 days
+	*plot: scatter plot
+	*x-axis: price
+	*y-axis: number of reviews
+	*facetting: type of room, using facet_grid
+	*plot title: Price and number of reviews from listings in Berlin's city center
+
+```{r you_04}
+#your code would be here :)
+
+
+```
+
+\pagebreak
+
+
+### More examples, help and used resources
 
 Here are some further links covering stuff we had no time to go over, and also some we used while preparing this workshop. Sharing is caring!
   
 * [Cookbook for R](http://www.cookbook-r.com)
 * [ggplot2 cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+* [Another amazing cheat sheet](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/)
 * [stackoverflow](http://stackoverflow.com)
 * [ggplot2 Harvard tutorial](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html)
+* RLadies Berlin tutorial: [Hands-on data visualization with ggplot2](https://github.com/pamelamatias/meetup-presentations_berlin/tree/master/2017-01_Hands_on_datavis_ggplot2)
 
+* _Bonus_: Feel like adding dogs to your ggplots? Check [this](http://luisdva.github.io/rstats/ggpup/) out! Your plots will never feel alone anymore #heartemoji 
+***
+
+### Solutions to practice exercises
+
+##### Practice 1
+```{r}
+ggplot(berlin, aes(x = room_type, y = availability_365))  + 
+ geom_boxplot() 				
+```
+
+#### Practice 2
+```{r}
+berlin_price <- subset(berlin, price < 100)
+ggplot(berlin_price, aes(x = price)) +
+geom_histogram(aes(color = room_type),bins=300) +
+facet_wrap(~room_type, nrow = 3)
+```
+
+#### Practice 3
+```{r}
+ggplot(berlin, aes(x = room_type, y = reviews_per_month)) + 
+	geom_boxplot(aes(color = room_type)) +
+  facet_wrap(~neighbourhood_group, nrow = 4)
+```
+
+#### Practice 4
+```{r}
+berlin_neighborhood <- subset(berlin,neighbourhood_group=="Mitte"&minimum_nights>20)
+ggplot(berlin_neighborhood, aes(price, number_of_reviews, color = room_type)) +
+	geom_point() +
+	facet_grid(.~room_type)+                     	#splitted into grid / matrix (x ~ y)
+	theme(axis.text = element_text(size = 6),       #modifying grid parameter: smaller text sizees
+			strip.text = element_text(size = 8)) +
+	scale_color_manual(values = brewer.pal(3, 'Spectral'))+		#changing colors using RColorBrewer
+	ggtitle('Price and number of reviews from listings in Berlin\'s city center')	#plot title
+```
 
 
 
