@@ -26,7 +26,7 @@ Please download the files that we'll be using today:
 * [Rscript](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/20172105_ggplot2_script.R) - R code 
 
 ### Data
-* [Berlin_listings_workshop.csv](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv): data on life expectancy for each country from 2000 to 2015, from the [World Health Organization](http://apps.who.int/gho/data/view.main.SDG2016LEXv?lang=en) 
+* [Berlin_listings_workshop.csv](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv): data on Airbnb hosts and homes in Berlin from [Inside Airbnb](http://insideairbnb.com) 
 
 ### Slides
 And the [PowerPoint slides](https://github.com/pameliux/RLadies_MUC/blob/master/20170521_2nd_meetup_ggplot2intro/20172105_ggplot2.pptx) are also here, in case you want to check them out.
