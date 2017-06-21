@@ -170,131 +170,128 @@ $(document).ready(function () {
 <p>Anyway, <a href="http://insideairbnb.com">Inside Airbnb</a> is a project that uses publicly available information from the Airbnb web-site. It includes the availability calendar for 365 days in the future, and the reviews for each listing. Since every detail is taken from what is out there, there is no “private” information being used without people’s consents - all of the host and place information is already available online.</p>
 <p>A lot of work has been put into verifying, cleaning, aggregating and analyzing the data by <a href="http://insideairbnb.com/behind.html">an entire team</a>, aand it’s been made available below under a <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 1.0 Universal (CC0 1.0) “Public Domain Dedication”</a> license - so in case you’re interested, you can also download and play around with tons and tons of data from <a href="http://insideairbnb.com/get-the-data.html">several other cities</a>.</p>
 <p>Btw, the platform offers an online <a href="http://insideairbnb.com/berlin/">visualization tool</a>. Our ggplots will be cool enough, but it could be worth taking a look at this tool.</p>
-<pre class="r"><code># Option 1: Importing directly from GitHub 
-#install.packages(&quot;RCurl&quot;)
+<p>Now, let’s get to work. We need to download the data and read it in R; this first chunk will make our lifes easier when importing it directly from GitHub:</p>
+<pre class="r"><code>#install.packages(&quot;RCurl&quot;)
 library(RCurl)</code></pre>
 <pre><code>## Warning: package 'RCurl' was built under R version 3.2.4</code></pre>
 <pre><code>## Loading required package: bitops</code></pre>
-<pre class="r"><code>x &lt;- getURL(&quot;https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings.csv&quot;)
-berlin &lt;- read.csv(text = x)
+<p>Note: There are two datasets online:</p>
+<ul>
+<li><p>The <a href="https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_raw.csv">raw data</a>, as directly downloaded from Inside Airbnb:</p></li>
+<li><p>Our <a href="https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv">workshop data</a>, which has some minor corrections for funny characters appearing in German names (such as the emoji looking o’s and u’s <em>mit umlaut</em>)</p></li>
+</ul>
+<pre class="r"><code># Option 1: Importing directly from GitHub using RCurl
+x &lt;- getURL(&quot;https://raw.githubusercontent.com/pamelamatias/RLadies_MUC/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv&quot;)
+berlin &lt;- read.csv(text = x, sep=&quot;;&quot;)
 
 #Option 2: Download and save (or clone) data, then just type in the corresponding directory and off we go!
-berlin&lt;-read.csv(&quot;/Users/Pam/Desktop/ggplot2/datasets/Berlin_listings.csv&quot;)
+berlin&lt;-read.table(&quot;/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv&quot;, sep=&quot;;&quot;)
 
 # Check nothing funny happened while we were importing it
 head(berlin)</code></pre>
-<pre><code>##         id                                                     name
-## 1 17260587 Kunterbuntes Zimmer mit eigenem Bad f\303\274r jedermann
-## 2 17227881                         Modernes Zimmer in Berlin Pankow
-## 3  1153584                         G\303\244stezimmer Berlin-Pankow
-## 4  7832750                        Sonniges Doppelzimmer+Nice Price!
-## 5 11634962           Room for womens in Pankow 30 min from the city
-## 6 13035058                         Guestroom with view of the stars
-##     host_id host_name neighbourhood_group
-## 1 110413588     Julia              Pankow
-## 2 116030782   Jessica              Pankow
-## 3   4813229    Ulrike              Pankow
-## 4  36417780      Lisa              Pankow
-## 5  12101514   Elektra              Pankow
-## 6  21797784  Jennifer              Pankow
-##                           neighbourhood latitude longitude    room_type
-## 1 Blankenfelde/Niedersch\303\266nhausen 52.58331  13.39609 Private room
-## 2 Blankenfelde/Niedersch\303\266nhausen 52.57642  13.39858 Private room
-## 3 Blankenfelde/Niedersch\303\266nhausen 52.58922  13.39926 Private room
-## 4 Blankenfelde/Niedersch\303\266nhausen 52.58231  13.39558 Private room
-## 5 Blankenfelde/Niedersch\303\266nhausen 52.58375  13.39366 Private room
-## 6 Blankenfelde/Niedersch\303\266nhausen 52.57967  13.39932 Private room
-##   price minimum_nights number_of_reviews last_review reviews_per_month
-## 1    30              2                 2  2017-05-03              2.00
-## 2    17              1                 3  2017-03-22              1.29
-## 3    50              2                56  2017-04-16              1.27
-## 4    28              2               111  2017-04-25              5.43
-## 5    21              1                17  2017-05-05              1.45
-## 6    38              2                19  2016-12-26              1.71
-##   calculated_host_listings_count availability_365
-## 1                              3               44
-## 2                              1               36
-## 3                              1              124
-## 4                              1                7
-## 5                              1               64
-## 6                              1              185</code></pre>
+<pre><code>##         V1        V2        V3                  V4
+## 1       id   host_id host_name neighbourhood_group
+## 2 17260587 110413588     Julia              Pankow
+## 3 17227881 116030782   Jessica              Pankow
+## 4  1153584   4813229    Ulrike              Pankow
+## 5  7832750  36417780      Lisa              Pankow
+## 6 11634962  12101514   Elektra              Pankow
+##                               V5                     V6
+## 1                  neighbourhood               latitude
+## 2 Blankenfelde/Niederschonhausen  5.258.330.601.280.290
+## 3 Blankenfelde/Niederschonhausen  5.257.641.672.545.430
+## 4 Blankenfelde/Niederschonhausen  5.258.921.822.417.370
+## 5 Blankenfelde/Niederschonhausen  5.258.231.232.676.320
+## 6 Blankenfelde/Niederschonhausen 52.583.748.670.555.500
+##                       V7           V8    V9            V10
+## 1              longitude    room_type price minimum_nights
+## 2 13.396.091.555.822.500 Private room    30              2
+## 3 13.398.581.791.685.800 Private room    17              1
+## 4 13.399.260.586.072.900 Private room    50              2
+## 5 13.395.584.373.495.400 Private room    28              2
+## 6 13.393.662.207.478.300 Private room    21              1
+##                 V11         V12               V13
+## 1 number_of_reviews last_review reviews_per_month
+## 2                 2    03/05/17                 2
+## 3                 3    22/03/17              1.29
+## 4                56    16/04/17              1.27
+## 5               111    25/04/17              5.43
+## 6                17    05/05/17              1.45
+##                              V14              V15
+## 1 calculated_host_listings_count availability_365
+## 2                              3               44
+## 3                              1               36
+## 4                              1              124
+## 5                              1                7
+## 6                              1               64</code></pre>
 <p>As you can see, <code>berlin</code> has &gt;20k listings for AirBnB places in Berlin, and 16 observations per listing. This dataset is Snapshot of the listings available at a particular time (in this case, up to last month)</p>
 <pre class="r"><code>#summary() of each variable: five-point statistics (numeric), number of entries per levels (factor)
 str(berlin)</code></pre>
-<pre><code>## 'data.frame':    20576 obs. of  16 variables:
-##  $ id                            : int  17260587 17227881 1153584 7832750 11634962 13035058 16601732 13413450 866332 9258549 ...
-##  $ name                          : Factor w/ 19831 levels &quot;&quot;,&quot;    Neuk\303\266lln with a view!  &quot;,..: 10283 11650 9316 14949 13634 9306 18579 3290 8319 18750 ...
-##  $ host_id                       : int  110413588 116030782 4813229 36417780 12101514 21797784 66145126 76401748 4551377 48098445 ...
-##  $ host_name                     : Factor w/ 5624 levels &quot;&quot;,&quot;(EMAIL HIDDEN)&quot;,..: 2691 2529 5248 3164 1433 2502 3164 961 4585 2589 ...
-##  $ neighbourhood_group           : Factor w/ 12 levels &quot;Charlottenburg-Wilm.&quot;,..: 7 7 7 7 7 7 7 7 7 7 ...
-##  $ neighbourhood                 : Factor w/ 137 levels &quot;Adlershof&quot;,&quot;Albrechtstr.&quot;,..: 15 15 15 15 15 15 15 15 15 15 ...
-##  $ latitude                      : num  52.6 52.6 52.6 52.6 52.6 ...
-##  $ longitude                     : num  13.4 13.4 13.4 13.4 13.4 ...
-##  $ room_type                     : Factor w/ 3 levels &quot;Entire home/apt&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
-##  $ price                         : int  30 17 50 28 21 38 40 25 37 30 ...
-##  $ minimum_nights                : int  2 1 2 2 1 2 1 14 4 1 ...
-##  $ number_of_reviews             : int  2 3 56 111 17 19 0 0 4 0 ...
-##  $ last_review                   : Factor w/ 889 levels &quot;&quot;,&quot;2011-01-26&quot;,..: 884 842 867 876 886 756 1 1 319 1 ...
-##  $ reviews_per_month             : num  2 1.29 1.27 5.43 1.45 1.71 NA NA 0.09 NA ...
-##  $ calculated_host_listings_count: int  3 1 1 1 1 1 1 1 1 1 ...
-##  $ availability_365              : int  44 36 124 7 64 185 88 0 88 0 ...</code></pre>
+<pre><code>## 'data.frame':    15734 obs. of  15 variables:
+##  $ V1 : Factor w/ 15734 levels &quot;&quot;,&quot;,558933,Frank,Tempelhof - Schoeneberg,Schoeneberg-Nord,52.49854776932377,13.342940503262401,Entire home/apt,70,3,53,2017-04-17,&quot;| __truncated__,..: 15733 6838 6782 1120 13697 1247 2289 6094 2584 14547 ...
+##  $ V2 : Factor w/ 13631 levels &quot;&quot;,&quot;100021197&quot;,..: 13631 733 1083 9117 7066 1413 4255 11022 11817 8749 ...
+##  $ V3 : Factor w/ 4675 levels &quot;&quot;,&quot;(EMAIL HIDDEN)&quot;,..: 4655 2226 2088 4371 2620 1182 2069 2620 796 3825 ...
+##  $ V4 : Factor w/ 16 levels &quot;&quot;,&quot;Charlottenburg-Wilm.&quot;,..: 16 9 9 9 9 9 9 9 9 9 ...
+##  $ V5 : Factor w/ 108 levels &quot;&quot;,&quot;5.249.911.164.085.470&quot;,..: 106 13 13 13 13 13 13 13 13 13 ...
+##  $ V6 : Factor w/ 15730 levels &quot;&quot;,&quot;13.234.461.157.186.100&quot;,..: 15730 10087 10062 10103 10082 14710 15725 10098 10114 14718 ...
+##  $ V7 : Factor w/ 15729 levels &quot;&quot;,&quot;1.314.625.212.904.970&quot;,..: 15729 8108 8356 8412 8047 7870 8417 8497 8740 7930 ...
+##  $ V8 : Factor w/ 7 levels &quot;&quot;,&quot;120&quot;,&quot;75&quot;,..: 7 5 5 5 5 5 5 5 5 5 ...
+##  $ V9 : Factor w/ 269 levels &quot;&quot;,&quot;0&quot;,&quot;1&quot;,&quot;10&quot;,..: 269 153 76 202 143 106 177 182 130 174 ...
+##  $ V10: Factor w/ 73 levels &quot;&quot;,&quot;0&quot;,&quot;1&quot;,&quot;10&quot;,..: 73 24 3 24 24 3 24 3 13 42 ...
+##  $ V11: Factor w/ 238 levels &quot;&quot;,&quot;0&quot;,&quot;1&quot;,&quot;10&quot;,..: 238 100 151 190 17 77 93 2 2 172 ...
+##  $ V12: Factor w/ 842 levels &quot;&quot;,&quot;01/01/15&quot;,..: 842 74 596 442 675 130 717 1 1 229 ...
+##  $ V13: Factor w/ 685 levels &quot;&quot;,&quot;0.01&quot;,&quot;0.02&quot;,..: 685 206 131 129 536 147 173 1 1 10 ...
+##  $ V14: Factor w/ 23 levels &quot;&quot;,&quot;1&quot;,&quot;10&quot;,&quot;11&quot;,..: 23 14 2 2 2 2 2 2 2 2 ...
+##  $ V15: Factor w/ 368 levels &quot;&quot;,&quot;0&quot;,&quot;1&quot;,&quot;10&quot;,..: 368 307 292 31 335 329 98 355 2 355 ...</code></pre>
 <pre class="r"><code>summary(berlin)</code></pre>
-<pre><code>##        id                                                     name      
-##  Min.   :    1971                                               :   97  
-##  1st Qu.: 5544077   Room in Neuk&lt;c3&gt;&lt;b6&gt;lln                     :   10  
-##  Median :10156210   Gem&lt;c3&gt;&lt;bc&gt;tliches Zimmer in Neuk&lt;c3&gt;&lt;b6&gt;lln:    9  
-##  Mean   :10137757   Apartment in the heart of Berlin            :    7  
-##  3rd Qu.:15230135   Cosy room in Friedrichshain                 :    7  
-##  Max.   :18614499   Cozy apartment in Prenzlauer Berg           :    7  
-##                     (Other)                                     :20439  
-##     host_id            host_name    
-##  Min.   :     2164   Anna   :  192  
-##  1st Qu.:  7338631   Julia  :  179  
-##  Median : 22234848   Daniel :  130  
-##  Mean   : 33711186   Martin :  123  
-##  3rd Qu.: 48585570   Thomas :  120  
-##  Max.   :129212521   David  :  115  
-##                      (Other):19717  
-##                     neighbourhood_group
-##  Friedrichshain-Kreuzberg     :5082    
-##  Mitte                        :4106    
-##  Neuk&lt;c3&gt;&lt;b6&gt;lln              :3461    
-##  Pankow                       :3363    
-##  Charlottenburg-Wilm.         :1346    
-##  Tempelhof - Sch&lt;c3&gt;&lt;b6&gt;neberg:1343    
-##  (Other)                      :1875    
-##                          neighbourhood      latitude       longitude    
-##  Tempelhofer Vorstadt           : 1220   Min.   :52.35   Min.   :13.12  
-##  Frankfurter Allee S&lt;c3&gt;&lt;bc&gt;d FK: 1218   1st Qu.:52.49   1st Qu.:13.38  
-##  Reuterstra&lt;c3&gt;&lt;9f&gt;e            : 1059   Median :52.51   Median :13.42  
-##  Alexanderplatz                 :  969   Mean   :52.51   Mean   :13.41  
-##  Rixdorf                        :  846   3rd Qu.:52.53   3rd Qu.:13.44  
-##  Brunnenstr. S&lt;c3&gt;&lt;bc&gt;d         :  745   Max.   :52.65   Max.   :13.74  
-##  (Other)                        :14519                                  
-##            room_type         price         minimum_nights    
-##  Entire home/apt:10285   Min.   :   0.00   Min.   :   1.000  
-##  Private room   :10011   1st Qu.:  30.00   1st Qu.:   1.000  
-##  Shared room    :  280   Median :  45.00   Median :   2.000  
-##                          Mean   :  58.28   Mean   :   4.791  
-##                          3rd Qu.:  69.00   3rd Qu.:   3.000  
-##                          Max.   :9000.00   Max.   :5000.000  
-##                                                              
-##  number_of_reviews     last_review    reviews_per_month
-##  Min.   :  0.00              : 4396   Min.   : 0.010   
-##  1st Qu.:  1.00    2017-05-01:  695   1st Qu.: 0.220   
-##  Median :  3.00    2017-04-17:  562   Median : 0.570   
-##  Mean   : 12.91    2017-04-30:  542   Mean   : 1.065   
-##  3rd Qu.: 12.00    2017-05-02:  415   3rd Qu.: 1.380   
-##  Max.   :360.00    2017-04-23:  373   Max.   :10.620   
-##                    (Other)   :13593   NA's   :4396     
-##  calculated_host_listings_count availability_365
-##  Min.   : 1.000                 Min.   :  0.0   
-##  1st Qu.: 1.000                 1st Qu.:  0.0   
-##  Median : 1.000                 Median : 33.0   
-##  Mean   : 1.698                 Mean   :104.7   
-##  3rd Qu.: 1.000                 3rd Qu.:211.0   
-##  Max.   :34.000                 Max.   :365.0   
-## </code></pre>
+<pre><code>##                                                                                                                                          V1       
+##                                                                                                                                           :    1  
+##  ,558933,Frank,Tempelhof - Schoeneberg,Schoeneberg-Nord,52.49854776932377,13.342940503262401,Entire home/apt,70,3,53,2017-04-17,0.75,1,289:    1  
+##  10002922                                                                                                                                 :    1  
+##  10005019                                                                                                                                 :    1  
+##  10005263                                                                                                                                 :    1  
+##  10006335                                                                                                                                 :    1  
+##  (Other)                                                                                                                                  :15728  
+##         V2              V3                               V4      
+##  8250486 :   34   Anna   :  157   Friedrichshain-Kreuzberg:4150  
+##  59442407:   29   Julia  :  129   Mitte                   :4106  
+##  16739581:   24   Daniel :  102   Pankow                  :1765  
+##  23904144:   24   Martin :  100   Neukoelln               :1686  
+##  15919349:   20   David  :   94   Tempelhof - Schoeneberg :1342  
+##  44404434:   19   Thomas :   90   Charlottenburg-Wilm.    :1256  
+##  (Other) :15584   (Other):15062   (Other)                 :1429  
+##                          V5                             V6       
+##  Tempelhofer Vorstadt     : 1220                         :    5  
+##  Alexanderplatz           :  969   13.234.461.157.186.100:    1  
+##  Frankfurter Allee Sued FK:  962   13.298.567.096.521.100:    1  
+##  Brunnenstr. Sued         :  745   5.234.620.285.150.360 :    1  
+##  Schillerpromenade        :  698   5.234.764.521.349.190 :    1  
+##  Prenzlauer Berg Suedwest :  640   5.236.927.026.933.560 :    1  
+##  (Other)                  :10500   (Other)               :15724  
+##                      V7                      V8             V9       
+##                       :    5                  :   5   50     :  876  
+##  Entire home/apt      :    2   120            :   1   30     :  846  
+##  1.314.625.212.904.970:    1   75             :   1   40     :  829  
+##  1.315.402.489.399.050:    1   Entire home/apt:7904   35     :  824  
+##  1.316.163.450.154.820:    1   Private room   :7597   25     :  755  
+##  1.317.329.287.578.590:    1   Shared room    : 225   45     :  645  
+##  (Other)              :15723   room_type      :   1   (Other):10959  
+##       V10            V11             V12             V13       
+##  1      :4769   0      :3262           : 3268          : 3267  
+##  2      :4213   1      :2013   01/05/17:  545   1      :  334  
+##  3      :2851   2      :1458   30/04/17:  436   0.05   :  296  
+##  4      : 966   3      :1078   17/04/17:  427   0.06   :  223  
+##  5      : 861   4      : 770   02/05/17:  317   0.09   :  205  
+##  7      : 604   5      : 675   23/04/17:  306   0.10   :  203  
+##  (Other):1470   (Other):6478   (Other) :10435   (Other):11206  
+##       V14             V15      
+##  1      :12136   0      :5593  
+##  2      : 1985   127    : 227  
+##  3      :  667   365    : 155  
+##  4      :  243   1      : 145  
+##  5      :  122   364    : 118  
+##  8      :   84   3      : 113  
+##  (Other):  497   (Other):9383</code></pre>
 </div>
 </div>
 
