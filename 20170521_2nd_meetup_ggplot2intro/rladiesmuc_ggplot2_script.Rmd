@@ -103,33 +103,45 @@ Note: There are two datasets online:
 ```{r}
 # A bit of preprocessing
 
-which(berlin$minimum_nights>200)
-
-berlin<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_raw.csv")
-berlin_raw <- berlin
-berlin <- berlin[,!colnames(berlin)=="name"]
-dim(berlin)
+berlin_raw<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_raw.csv")
 summary(berlin_raw)
-berlin[which(berlin$minimum_nights>365),"minimum_nights"] <- NA
+sum(is.na(berlin_raw)) #4396
 
-berlin<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv",stringsAsFactors=FALSE)
+berlin_ws <- berlin_raw<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_raw.csv", stringsAsFactors = F)
+berlin_ws <- berlin_raw[,!colnames(berlin_raw)=="name"]
+dim(berlin_ws)
+summary(berlin_ws)
 
-berlin$neighbourhood_group[which(berlin$neighbourhood_group=="Neuk\303\266lln")]<- "Neukoelln"
-berlin$neighbourhood_group[which(berlin$neighbourhood_group=="Tempelhof - Sch\303\266neberg")] <- "Tempelhof - Schoeneberg"
-berlin$neighbourhood_group[which(berlin$neighbourhood_group=="Treptow - K\303\266penick")] <- "Treptow - Koepenick"
-berlin$neighbourhood_group <- as.factor(berlin$neighbourhood_group)
-levels(berlin$neighbourhood_group)
+berlin_ws[which(berlin_ws$minimum_nights>365),"minimum_nights"] <- NA
+sum(is.na(berlin_ws)) #4399
 
-summary(berlin)
-berlin$id <- as.integer(berlin$id)
-berlin$host_id <- as.integer(berlin$host_id)
-berlin$host_name <- as.factor(berlin$host_name)
-berlin$neighbourhood_group <- as.factor(berlin$neighbourhood_group)
-berlin$neighbourhood <- as.factor(berlin$neighbourhood)
-berlin$room_type <- as.factor(berlin$room_type)
-berlin$number_of_reviews <- as.numeric(berlin$number_of_reviews)
-berlin$last_review <- as.Date(berlin$last_review)
-write.csv(berlin, "/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
+berlin_ws$neighbourhood_group[which(berlin_ws$neighbourhood_group=="Neuk\303\266lln")]<- "Neukoelln"
+berlin_ws$neighbourhood_group[which(berlin_ws$neighbourhood_group=="Tempelhof - Sch\303\266neberg")] <- "Tempelhof - Schoeneberg"
+berlin_ws$neighbourhood_group[which(berlin_ws$neighbourhood_group=="Treptow - K\303\266penick")] <- "Treptow - Koepenick"
+berlin_ws$neighbourhood_group <- as.factor(berlin_ws$neighbourhood_group)
+levels(berlin_ws$neighbourhood_group)
+
+summary(berlin_ws)
+berlin_ws$id <- as.integer(berlin_ws$id)
+berlin_ws$host_id <- as.integer(berlin_ws$host_id)
+berlin_ws$host_name <- as.factor(berlin_ws$host_name)
+berlin_ws$neighbourhood_group <- as.factor(berlin_ws$neighbourhood_group)
+berlin_ws$neighbourhood <- as.factor(berlin_ws$neighbourhood)
+berlin_ws$room_type <- as.factor(berlin_ws$room_type)
+berlin_ws$number_of_reviews <- as.numeric(berlin_ws$number_of_reviews)
+berlin_ws$last_review <- as.Date(berlin_ws$last_review)
+berlin_ws$calculated_host_listings_count <- as.numeric(berlin_ws$calculated_host_listings_count)
+berlin_ws$availability_365 <- as.numeric(berlin_ws$availability_365)
+berlin_ws$minimum_nights <- as.numeric(berlin_ws$minimum_nights)
+berlin_ws$reviews_per_month <- as.numeric(berlin_ws$reviews_per_month)
+berlin_ws$price <- as.numeric(berlin_ws$price)
+summary(berlin_ws)
+head(berlin_ws)
+
+write.csv(berlin_ws, "/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
+
+berlin<-read.csv("/Users/Pam/Documents/GitHub/rladies_munich/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv")
+
 
 ```
 
