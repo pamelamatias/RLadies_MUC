@@ -1,6 +1,6 @@
 
 #Making fRiends with: ggplot2
-Data + code for the (second RLadies Munich Meetup)[https://www.meetup.com/rladies-munich/events/240663684/] on Wednesday 21st, 2017.
+Data + code for the [second RLadies Munich Meetup](https://www.meetup.com/rladies-munich/events/240663684/) on Wednesday 21st, 2017.
 
 So excited to have the chance to experiment and play around with a visualization tool as cool and _actually_ not as scary to use as `ggplot2`! 
 
