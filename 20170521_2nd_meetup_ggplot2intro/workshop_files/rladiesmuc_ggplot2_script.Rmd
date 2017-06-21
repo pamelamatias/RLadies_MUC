@@ -1,12 +1,11 @@
 ---
-title: "Making fRiends with: ggplot2"
+title: 'Making fRiends with: ggplot2'
 author: "Pamela Matias"
 date: "June 21st 2017"
 output:
-  html_document: default
-  html_notebook: default
   pdf_document: default
-
+  html_notebook: default
+  html_document: default
 ---
 
 ***
