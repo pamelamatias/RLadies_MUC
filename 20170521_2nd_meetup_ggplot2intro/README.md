@@ -17,15 +17,16 @@ Before we start, do check you have R and RStudio in your personal computer. If y
 
 Please download the files that we'll be using today:
 
-### Annotated code and step-by step instructions for the workshop #pending
-* [Name](link) - PDF file (ready to be printed out)
-* [Name](link) - RMarkdown file (ready to be opened and ran in R)
+### Annotated code and step-by step instructions for the workshop 
+* [Script.pdf](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/rladiesmuc_ggplot2_script.pdf) - PDF file (ready to be printed out)
+* [RMarkdown file](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/rladiesmuc_ggplot2_script.Rmd) - RMarkdown file (ready to be opened and ran in R)
+* [Script.html](https://github.com/pamelamatias/RLadies_MUC/blob/master/20170521_2nd_meetup_ggplot2intro/workshop_files/rladiesmuc_ggplot2_script.html) - html file (which you can follow with easily)
 
 ### R code
-* [Name](link) - R code #pending
+* [Rscript](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/20172105_ggplot2_script.R) - R code 
 
 ### Data
-* [life.csv](xxxxx): data on life expectancy for each country from 2000 to 2015, from the [World Health Organization](http://apps.who.int/gho/data/view.main.SDG2016LEXv?lang=en) #pending
+* [Berlin_listings_workshop.csv](https://github.com/pamelamatias/RLadies_MUC/tree/master/20170521_2nd_meetup_ggplot2intro/workshop_files/Berlin_listings_workshop.csv): data on life expectancy for each country from 2000 to 2015, from the [World Health Organization](http://apps.who.int/gho/data/view.main.SDG2016LEXv?lang=en) 
 
 ### Slides
 And the [PowerPoint slides](https://github.com/pameliux/RLadies_MUC/blob/master/20170521_2nd_meetup_ggplot2intro/20172105_ggplot2.pptx) are also here, in case you want to check them out.
