@@ -2,6 +2,7 @@
 
 install.packages("RCurl")
 library(RCurl)
+install.packages("RColorBrewer")
 library(RColorBrewer)
 
 ## A bit of preprocessing -----------------------
@@ -77,13 +78,12 @@ str(berlin)
 
 summary(berlin)
 
-
 hist(berlin$availability_365)
 
+install.packages("ggplot2")
 library(ggplot2)
 ggplot(berlin, aes(x = availability_365)) +
 geom_histogram()
-
 #scatter 01
 #definition of the data set and variables for each axis.
 ggplot(berlin, aes(x = minimum_nights, y = price))
@@ -202,6 +202,13 @@ ggtitle('A beautiful ggplot2')	#plot title
 # Now it's time for you to play a little with our dataset and the little we covered today :) 
 
 ##### Practice 1
+# data: full dataset 
+# type of plot: boxplot
+# x-axis: room type 
+# y-axis: availability within the next 365 days
+ggplot()
+
+
 ggplot(berlin, aes(x = room_type, y = availability_365))  + 
   geom_boxplot() 				
 
