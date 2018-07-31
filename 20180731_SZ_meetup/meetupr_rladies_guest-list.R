@@ -22,8 +22,6 @@ attendees <- rsvps[rsvps$response == "yes", ]
 head(attendees)
 
 #save atendee list 
-class(attendees)
 attendee_list <- data.frame(attendees)
-head(attendee_list)
 attendee_list <- attendee_list[,grep("member_id|member_name|guests",colnames(attendee_list))]
-
+write.csv2(attendee_list,"guest_list_meetup_SZ_310072018.csv")
